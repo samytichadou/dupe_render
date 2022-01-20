@@ -1,36 +1,34 @@
 import bpy
 import shutil
-import datetime
 
 from bpy.app.handlers import persistent
 
-@persistent
-def start_handler(scene):
-    print("test_start_handler")
+from .hash_operator import get_frame_hash
 
 @persistent
-def end_handler(scene):
-    print("test_end_handler")
+def render_init_handler(scene):
+
+    print("Dupe Render --- checking frame")
+    current_hash = get_frame_hash()
+
+    if scene.duperender_previous_hash == current_hash:
+        print("Dupe Render --- duped frame copying")
+
+    print("Dupe Render --- writing hash in memory")
+    scene.duperender_previous_hash = current_hash
 
 @persistent
-def deps_handler_start(scene):
-    print("deps_handler start - " + str(datetime.datetime.now()))
-
-@persistent
-def deps_handler_end(scene):
-    print("deps_handler end - " + str(datetime.datetime.now()))
-
+def render_write_handler(scene):
+    print("writing handler")
+    print(scene.frame_current)
+    
 
 ### REGISTER ---
 
 def register():
-    bpy.app.handlers.render_init.append(start_handler)
-    bpy.app.handlers.render_write.append(end_handler)
-    bpy.app.handlers.depsgraph_update_pre.append(deps_handler_start)
-    bpy.app.handlers.depsgraph_update_post.append(deps_handler_start)
+    bpy.app.handlers.render_init.append(render_init_handler)
+    bpy.app.handlers.render_write.append(render_write_handler)
 
 def unregister():
-    bpy.app.handlers.render_init.remove(start_handler)
-    bpy.app.handlers.render_write.remove(end_handler)
-    bpy.app.handlers.depsgraph_update_pre.remove(deps_handler_start)
-    bpy.app.handlers.depsgraph_update_post.remove(deps_handler_start)
+    bpy.app.handlers.render_init.remove(render_init_handler)
+    bpy.app.handlers.render_write.remove(render_write_handler)

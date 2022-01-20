@@ -33,7 +33,7 @@ bl_info = {
 ##################################
 
 from . import   (
-    #handler,
+    handler,
     hash_operator,
     properties,
     gui,
@@ -44,13 +44,13 @@ from . import   (
 ##################################
 
 def register():
-    #handler.register()
+    handler.register()
     hash_operator.register()
     properties.register()
     gui.register()
 
 def unregister():
-    #handler.unregister()
+    handler.unregister()
     hash_operator.unregister()
     properties.unregister()
     gui.unregister()
