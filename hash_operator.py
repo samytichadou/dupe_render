@@ -93,6 +93,23 @@ def get_frame_hash():
     hash = hashlib.md5(str(lst).encode("utf-8")).hexdigest()
     return hash
 
+def get_frames_to_render(start, end, context):
+    scn = context.scene
+    hash_list = []
+    frame_list = []
+    old_frame = scn.frame_current
+
+    for f in range(start, end + 1):
+        scn.frame_current = f
+        hash = get_frame_hash()
+        print("frame %i --- %s" % (f, hash))
+        if hash not in hash_list:
+            hash_list.append(hash)
+            frame_list.append(f)
+
+    scn.frame_current = old_frame
+    return frame_list
+
 
 class DUPERENDER_OT_preview_dupe_render(bpy.types.Operator):
     bl_idname = "duperender.preview_dupe_render"
@@ -101,12 +118,12 @@ class DUPERENDER_OT_preview_dupe_render(bpy.types.Operator):
     #bl_options = {'INTERNAL'}
 
     custom_range : bpy.props.BoolProperty()
-    original_frames_list : bpy.props.StringProperty(
+    original_frames_string : bpy.props.StringProperty(
         name = "Original Frames List",
         description="Frames to Render, you can copy paste this list",
         )
     total_frames = 0
-    original_frames = 0
+    original_frames_nb = 0
     dupe_frames = 0
     range_error = False
     final_range = ""
@@ -116,11 +133,7 @@ class DUPERENDER_OT_preview_dupe_render(bpy.types.Operator):
         return True
 
     def invoke(self, context, event):
-        hash_list = []
-
         scn = context.scene
-        old_frame = scn.frame_current
-        original_frames = ""
 
         if not self.custom_range:
             fr_in = scn.frame_start
@@ -132,22 +145,13 @@ class DUPERENDER_OT_preview_dupe_render(bpy.types.Operator):
                 self.range_error = True
                 return context.window_manager.invoke_props_dialog(self)
 
+        original_list = get_frames_to_render(fr_in, fr_out, context)
+
         self.final_range = "%i - %i" % (fr_in, fr_out)
-
-        for f in range(fr_in, fr_out + 1):
-            scn.frame_current = f
-            hash = get_frame_hash()
-            print("frame %i --- %s" % (f, hash))
-            if hash not in hash_list:
-                hash_list.append(hash)
-                original_frames += "%i, " % f
-
-        self.original_frames = len(hash_list)
+        self.original_frames_nb = len(original_list)
         self.total_frames = fr_out - fr_in + 1
-        self.dupe_frames = self.total_frames - self.original_frames
-        self.original_frames_list = original_frames[:-2]
-
-        scn.frame_current = old_frame
+        self.dupe_frames = self.total_frames - self.original_frames_nb
+        self.original_frames_string = ", ".join(str(e) for e in original_list)
 
         return context.window_manager.invoke_props_dialog(self)
  
@@ -158,8 +162,8 @@ class DUPERENDER_OT_preview_dupe_render(bpy.types.Operator):
         if not self.range_error:
             layout.label(text="Range : %s" % self.final_range)
             col = layout.column(align=True)
-            col.label(text="%i frame(s) to render out of %i" % (self.original_frames, self.total_frames))
-            col.prop(self, "original_frames_list", text="")
+            col.label(text="%i frame(s) to render out of %i" % (self.original_frames_nb, self.total_frames))
+            col.prop(self, "original_frames_string", text="")
             col.separator()
             col.label(text="%i dupe(s) could be skipped" % self.dupe_frames)
         else:
