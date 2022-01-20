@@ -27,6 +27,8 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         
         layout.operator("duperender.preview_dupe_render", text="Preview Dupes for custom range").custom_range = True
 
+        layout.prop(scn, "duperender_to_render_list")
+
 
 ### REGISTER ---
 

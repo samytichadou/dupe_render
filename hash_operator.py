@@ -139,7 +139,7 @@ class DUPERENDER_OT_preview_dupe_render(bpy.types.Operator):
             hash = get_frame_hash()
             print("frame %i --- %s" % (f, hash))
             if hash not in hash_list:
-                hash_list.append(get_frame_hash())
+                hash_list.append(hash)
                 original_frames += "%i, " % f
 
         self.original_frames = len(hash_list)
