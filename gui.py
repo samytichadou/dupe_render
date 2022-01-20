@@ -11,10 +11,17 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
     def poll(cls, context):
         return True
 
+    def draw_header(self, context):
+        scn = context.scene
+        self.layout.prop(scn, "duperender_use_duperender", text="")
+
     def draw(self, context):
         scn = context.scene
         
         layout = self.layout
+
+        if not scn.duperender_use_duperender:
+            layout.enabled = False
         layout.use_property_split = True
 
         layout.operator("duperender.hash_frame")
