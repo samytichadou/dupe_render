@@ -93,10 +93,10 @@ def get_frame_hash():
     hash = hashlib.md5(str(lst).encode("utf-8")).hexdigest()
     return hash
 
-def get_frames_to_render(start, end, context):
-    scn = context.scene
+def get_frames_to_render(start, end, scn):
     hash_list = []
     frame_list = []
+    dupe_list = []
     old_frame = scn.frame_current
 
     for f in range(start, end + 1):
@@ -106,9 +106,11 @@ def get_frames_to_render(start, end, context):
         if hash not in hash_list:
             hash_list.append(hash)
             frame_list.append(f)
+        else:
+            dupe_list.append(f)
 
     scn.frame_current = old_frame
-    return frame_list
+    return frame_list, dupe_list
 
 
 class DUPERENDER_OT_preview_dupe_render(bpy.types.Operator):
@@ -145,7 +147,7 @@ class DUPERENDER_OT_preview_dupe_render(bpy.types.Operator):
                 self.range_error = True
                 return context.window_manager.invoke_props_dialog(self)
 
-        original_list = get_frames_to_render(fr_in, fr_out, context)
+        original_list = get_frames_to_render(fr_in, fr_out, scn)[0]
 
         self.final_range = "%i - %i" % (fr_in, fr_out)
         self.original_frames_nb = len(original_list)
