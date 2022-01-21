@@ -93,13 +93,13 @@ def get_frame_hash():
     hash = hashlib.md5(str(lst).encode("utf-8")).hexdigest()
     return hash
 
-def get_frames_to_render(start, end, scn):
+def get_frames_to_render(scn):
     hash_list = []
     frame_list = []
     dupe_list = []
     old_frame = scn.frame_current
 
-    for f in range(start, end + 1):
+    for f in range(scn.frame_start, scn.frame_end + 1):
         scn.frame_current = f
         hash = get_frame_hash()
         print("frame %i --- %s" % (f, hash))
@@ -113,13 +113,12 @@ def get_frames_to_render(start, end, scn):
     return frame_list, dupe_list
 
 
-class DUPERENDER_OT_preview_dupe_render(bpy.types.Operator):
-    bl_idname = "duperender.preview_dupe_render"
-    bl_label = "Preview Dupe Render"
+class DUPERENDER_OT_process_dupe_render(bpy.types.Operator):
+    bl_idname = "duperender.process_dupe_render"
+    bl_label = "Process Dupe Render"
     bl_description = ""
     #bl_options = {'INTERNAL'}
 
-    custom_range : bpy.props.BoolProperty()
     original_frames_string : bpy.props.StringProperty(
         name = "Original Frames List",
         description="Frames to Render, you can copy paste this list",
@@ -129,6 +128,7 @@ class DUPERENDER_OT_preview_dupe_render(bpy.types.Operator):
     dupe_frames = 0
     range_error = False
     final_range = ""
+    dupe_frames_string = ""
 
     @classmethod
     def poll(cls, context):
@@ -137,41 +137,36 @@ class DUPERENDER_OT_preview_dupe_render(bpy.types.Operator):
     def invoke(self, context, event):
         scn = context.scene
 
-        if not self.custom_range:
-            fr_in = scn.frame_start
-            fr_out = scn.frame_end
-        else:
-            fr_in = scn.duperender_custom_frame_start
-            fr_out = scn.duperender_custom_frame_end
-            if fr_in >= fr_out:
-                self.range_error = True
-                return context.window_manager.invoke_props_dialog(self)
+        fr_in = scn.frame_start
+        fr_out = scn.frame_end
 
-        original_list = get_frames_to_render(fr_in, fr_out, scn)[0]
+        original_list, dupe_list = get_frames_to_render(scn)
 
         self.final_range = "%i - %i" % (fr_in, fr_out)
         self.original_frames_nb = len(original_list)
         self.total_frames = fr_out - fr_in + 1
         self.dupe_frames = self.total_frames - self.original_frames_nb
-        self.original_frames_string = ", ".join(str(e) for e in original_list)
+        self.original_frames_string = ",".join(str(e) for e in original_list)
+        self.dupe_frames_string = ",".join(str(e) for e in dupe_list)
 
         return context.window_manager.invoke_props_dialog(self)
  
     def draw(self, context):
         layout = self.layout
 
-
-        if not self.range_error:
-            layout.label(text="Range : %s" % self.final_range)
-            col = layout.column(align=True)
-            col.label(text="%i frame(s) to render out of %i" % (self.original_frames_nb, self.total_frames))
-            col.prop(self, "original_frames_string", text="")
-            col.separator()
-            col.label(text="%i dupe(s) could be skipped" % self.dupe_frames)
-        else:
-            layout.label(text="Custom End Frame must be superior to Custom Start Frame")
+        layout.label(text="Range : %s" % self.final_range)
+        col = layout.column(align=True)
+        col.label(text="%i frame(s) to render out of %i" % (self.original_frames_nb, self.total_frames))
+        col.prop(self, "original_frames_string", text="")
+        col.separator()
+        col.label(text="%i dupe(s) could be skipped" % self.dupe_frames)
+        layout.label(text="OK to schedule dupe frames for next render")       
 
     def execute(self, context):
+        scn = context.scene
+        scn.duperender_dupelist = self.dupe_frames_string
+        scn.duperender_next_render = True
+        self.report({'INFO'}, "Dupe Frames scheduled")
         return {'FINISHED'}
 
 
@@ -194,9 +189,9 @@ class DUPERENDER_OT_hash_frame(bpy.types.Operator):
 ### REGISTER ---
 
 def register():
-    bpy.utils.register_class(DUPERENDER_OT_preview_dupe_render)
+    bpy.utils.register_class(DUPERENDER_OT_process_dupe_render)
     bpy.utils.register_class(DUPERENDER_OT_hash_frame)
 
 def unregister():
-    bpy.utils.unregister_class(DUPERENDER_OT_preview_dupe_render)
+    bpy.utils.unregister_class(DUPERENDER_OT_process_dupe_render)
     bpy.utils.unregister_class(DUPERENDER_OT_hash_frame)

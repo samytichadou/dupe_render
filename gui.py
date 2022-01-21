@@ -17,24 +17,25 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
 
     def draw(self, context):
         scn = context.scene
-        
         layout = self.layout
 
-        if not scn.duperender_use_duperender:
+
+        if not scn.duperender_use_duperender\
+        or scn.render.use_overwrite:
             layout.enabled = False
-        layout.use_property_split = True
+
+        if scn.render.use_overwrite:
+            layout.label(text="Overwrite Render used", icon = "ERROR")
 
         layout.operator("duperender.hash_frame")
+        layout.operator("duperender.process_dupe_render")
 
-        layout.operator("duperender.preview_dupe_render", text="Preview Dupes for scene range").custom_range = False
-
-        col = layout.column(align=True)
-        col.prop(scn, "duperender_custom_frame_start")
-        col.prop(scn, "duperender_custom_frame_end", text="End")
-        
-        layout.operator("duperender.preview_dupe_render", text="Preview Dupes for custom range").custom_range = True
-
-        layout.prop(scn, "duperender_to_render_list")
+        box = layout.box()
+        box.prop(scn, "duperender_next_render")
+        row = box.row()
+        if not scn.duperender_next_render:
+            row.enabled = False
+        row.prop(scn, "duperender_dupelist")
 
 
 ### REGISTER ---

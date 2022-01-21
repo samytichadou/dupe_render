@@ -4,17 +4,14 @@ import bpy
 ### REGISTER ---
 
 def register():
-    bpy.types.Scene.duperender_custom_frame_start = \
-        bpy.props.IntProperty(name='Frame Start', default = 1)
-    bpy.types.Scene.duperender_custom_frame_end = \
-        bpy.props.IntProperty(name='Frame End', default = 250)
-    bpy.types.Scene.duperender_to_render_list = \
-        bpy.props.StringProperty() 
+    bpy.types.Scene.duperender_dupelist = \
+        bpy.props.StringProperty(name="Dupe List") 
     bpy.types.Scene.duperender_use_duperender = \
-        bpy.props.BoolProperty(name="Use Dupe Render") 
+        bpy.props.BoolProperty(name="Use Dupe Render")
+    bpy.types.Scene.duperender_next_render = \
+        bpy.props.BoolProperty(name="Use Dupe Render in Next Render")
 
 def unregister():
-    del bpy.types.Scene.duperender_custom_frame_start
-    del bpy.types.Scene.duperender_custom_frame_end
-    del bpy.types.Scene.duperender_to_render_list
+    del bpy.types.Scene.duperender_dupelist
     del bpy.types.Scene.duperender_use_duperender
+    del bpy.types.Scene.duperender_next_render
