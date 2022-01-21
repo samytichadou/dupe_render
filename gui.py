@@ -20,11 +20,12 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         layout = self.layout
 
 
-        if not scn.duperender_use_duperender\
-        or scn.render.use_overwrite:
+        if not scn.duperender_use_duperender:
             layout.enabled = False
 
-        if scn.render.use_overwrite:
+        if context.scene.render.is_movie_format:
+            layout.label(text="Movie Format Output used", icon = "ERROR")
+        elif scn.render.use_overwrite:
             layout.label(text="Overwrite Render used", icon = "ERROR")
 
         layout.operator("duperender.hash_frame")
