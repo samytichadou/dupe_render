@@ -166,7 +166,13 @@ class DUPERENDER_OT_process_dupe_render(bpy.types.Operator):
         scn = context.scene
         scn.duperender_dupelist = self.dupe_frames_string
         scn.duperender_next_render = True
+        
+        # redraw props gui
+        for area in context.screen.areas:
+            area.tag_redraw()
+
         self.report({'INFO'}, "Dupe Frames scheduled")
+        
         return {'FINISHED'}
 
 

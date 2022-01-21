@@ -85,7 +85,7 @@ def render_complete_handler(scene):
     replace_placeholders(scene)
 
     #cleaning
-    scene.duperender_dupelist = ""
+    #scene.duperender_dupelist = ""
     scene.duperender_next_render = False
 
 ### REGISTER ---
