@@ -7,7 +7,7 @@ def register():
     bpy.types.Scene.duperender_dupelist = \
         bpy.props.StringProperty(name="Dupe List") 
     bpy.types.Scene.duperender_use_duperender = \
-        bpy.props.BoolProperty(name="Use Dupe Render")
+        bpy.props.BoolProperty(name="Use Dupe Render", default=True)
     bpy.types.Scene.duperender_next_render = \
         bpy.props.BoolProperty(name="Use Dupe Render in Next Render")
 
