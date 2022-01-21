@@ -116,7 +116,7 @@ def get_frames_to_render(scn):
 class DUPERENDER_OT_process_dupe_render(bpy.types.Operator):
     bl_idname = "duperender.process_dupe_render"
     bl_label = "Process Dupe Render"
-    bl_description = ""
+    bl_description = "Process dupe images to skip on next render"
     #bl_options = {'INTERNAL'}
 
     original_frames_string : bpy.props.StringProperty(
@@ -166,7 +166,7 @@ class DUPERENDER_OT_process_dupe_render(bpy.types.Operator):
         scn = context.scene
         scn.duperender_dupelist = self.dupe_frames_string
         scn.duperender_next_render = True
-        
+
         # redraw props gui
         for area in context.screen.areas:
             area.tag_redraw()
