@@ -29,6 +29,9 @@ from bpy.app.handlers import persistent
 
 def create_placeholders(scene):
     dupe_list = scene.duperender_dupelist.split(",")
+    base_dir = os.path.dirname(scene.render.frame_path(frame=1))
+    if not os.path.isdir(base_dir):
+        os.makedirs(base_dir)
     for dupe in dupe_list:
         f = int(dupe)
         path = scene.render.frame_path(frame=f)
