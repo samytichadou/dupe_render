@@ -165,6 +165,7 @@ class DUPERENDER_OT_process_dupe_render(bpy.types.Operator):
     def execute(self, context):
         scn = context.scene
         scn.duperender_dupelist = self.dupe_frames_string
+        scn.duperender_originallist = self.original_frames_string
         scn.duperender_next_render = True
 
         # redraw props gui

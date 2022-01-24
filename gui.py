@@ -24,19 +24,25 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
             layout.enabled = False
 
         if context.scene.render.is_movie_format:
-            layout.label(text="Movie Format Output used", icon = "ERROR")
+            layout.label(text="Movie Format Output used", icon = "INFO")
         elif scn.render.use_overwrite:
-            layout.label(text="Overwrite Render used", icon = "ERROR")
-
-        layout.operator("duperender.hash_frame")
-        layout.operator("duperender.process_dupe_render")
+            layout.label(text="Overwrite Render used", icon = "INFO")
+        elif scn.duperender_dupelist == "":
+            layout.label(text="No dupe frames", icon = "INFO")
 
         box = layout.box()
-        box.prop(scn, "duperender_next_render")
-        row = box.row()
-        if not scn.duperender_next_render:
-            row.enabled = False
-        row.prop(scn, "duperender_dupelist")
+        col = box.column(align=True)
+        col.operator("duperender.process_dupe_render")
+        col.prop(scn, "duperender_next_render")
+        # row = col.row()
+        # if not scn.duperender_next_render:
+        #     row.enabled = False
+        col.prop(scn, "duperender_dupelist", text="Dupes")
+        col.prop(scn, "duperender_originallist", text="Originals")
+
+        box = layout.box()
+        col = box.column(align=True)
+        col.operator("duperender.hash_frame")
 
 
 ### REGISTER ---
