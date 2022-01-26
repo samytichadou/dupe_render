@@ -103,4 +103,4 @@ def register():
 def unregister():
     bpy.app.handlers.render_init.remove(render_init_handler)
     bpy.app.handlers.render_complete.remove(render_complete_handler)
-    bpy.app.handlers.render_cancel.append(render_complete_handler)
+    bpy.app.handlers.render_cancel.remove(render_complete_handler)
