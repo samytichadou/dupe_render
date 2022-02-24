@@ -113,9 +113,9 @@ def get_frames_to_render(scn):
     return frame_list, dupe_list
 
 
-class DUPERENDER_OT_process_dupe_render(bpy.types.Operator):
-    bl_idname = "duperender.process_dupe_render"
-    bl_label = "Process Dupe Render"
+class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
+    bl_idname = "duperender.find_dupe_frames"
+    bl_label = "Find dupe frames"
     bl_description = "Process dupe images to skip on next render"
     #bl_options = {'INTERNAL'}
 
@@ -196,9 +196,9 @@ class DUPERENDER_OT_hash_frame(bpy.types.Operator):
 ### REGISTER ---
 
 def register():
-    bpy.utils.register_class(DUPERENDER_OT_process_dupe_render)
+    bpy.utils.register_class(DUPERENDER_OT_find_dupe_frames)
     bpy.utils.register_class(DUPERENDER_OT_hash_frame)
 
 def unregister():
-    bpy.utils.unregister_class(DUPERENDER_OT_process_dupe_render)
+    bpy.utils.unregister_class(DUPERENDER_OT_find_dupe_frames)
     bpy.utils.unregister_class(DUPERENDER_OT_hash_frame)
