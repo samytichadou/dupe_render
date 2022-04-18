@@ -32,9 +32,7 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         box = layout.box()
         col = box.column(align=True)
         col.operator("duperender.find_dupe_frames")
-        # row = col.row()
-        # if not scn.duperender_render:
-        #     row.enabled = False
+
         col.prop(scn, "duperender_dupelist", text="Dupes")
         col.prop(scn, "duperender_originallist", text="Originals")
 
