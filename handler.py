@@ -11,9 +11,10 @@ def create_placeholders(scene):
         os.makedirs(base_dir)
     for dupe in dupe_list:
         f = int(dupe)
-        path = scene.render.frame_path(frame=f)
-        print("Dupe Render --- creating placeholder : %s" % path)
-        open(path, 'a').close()
+        if f in range(scene.frame_start, scene.frame_end+1) and f!=scene.frame_start:
+            path = scene.render.frame_path(frame=f)
+            print("Dupe Render --- creating placeholder : %s" % path)
+            open(path, 'a').close()
 
 @persistent
 def render_init_handler(scene):
@@ -27,32 +28,40 @@ def render_init_handler(scene):
     
     #creating empty files
     create_placeholders(scene)
+    
+def search_original_from_dupe(frame, scene):
+    dupe_list = scene.duperender_dupelist.split(",")
+    for f in range(frame-1,scene.frame_start-1, -1):
+        if str(f) not in dupe_list:
+            return f
+    if frame!=scene.frame_start:
+        return scene.frame_start
+    return None
 
 def replace_placeholders(scene):
     dupe_list = scene.duperender_dupelist.split(",")
 
     for dupe in dupe_list:
         i = int(dupe)
-        path = scene.render.frame_path(frame=i)
-        if os.path.isfile(path):
-            try:
-                os.remove(path)
-            except OSError as error:
-                print(error)
-                print("Dupe Render --- unable to duplicate frame %i, skipping" % i)
-                continue
-        chk_copy = False
-        for f in range(i-1,scene.frame_start-1, -1):
-            if str(f) not in dupe_list:
-                oldpath = scene.render.frame_path(frame=f)
-                print("Dupe Render --- duplicating frame %i to %s" % (f, path))
+        if i in range(scene.frame_start, scene.frame_end+1):
+            path = scene.render.frame_path(frame=i)
+            original = search_original_from_dupe(i, scene)
+            if original is not None:
+                #remove dupe frame
+                if os.path.isfile(path):
+                    try:
+                        os.remove(path)
+                    except OSError as error:
+                        print(error)
+                        print("Dupe Render --- unable to remove frame %i, skipping" % i)
+                        continue
+                chk_copy = False
+                oldpath = scene.render.frame_path(frame=original)
                 if not os.path.isfile(oldpath):
-                    break
+                    print("Dupe Render --- failed to find original frame for dupe : %i" % i)
+                    continue
+                print("Dupe Render --- duplicating frame %i to %s" % (i, path))
                 shutil.copy(oldpath, path)
-                chk_copy = True
-                break
-        if not chk_copy:
-            print("Dupe Render --- failed to find original frame for dupe : %i" % i)
 
 @persistent
 def render_complete_handler(scene):
