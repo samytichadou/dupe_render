@@ -11,7 +11,11 @@ def register():
     bpy.types.Scene.duperender_use_duperender = \
         bpy.props.BoolProperty(name="Use Dupe Render", default=True)
     bpy.types.Scene.duperender_render = \
-        bpy.props.BoolProperty(name="Use Dupe Render in Next Render")
+        bpy.props.BoolProperty(name="Use Dupe Render in animation render")
+    bpy.types.Scene.duperender_frame_start = \
+        bpy.props.IntProperty(default=-1)
+    bpy.types.Scene.duperender_frame_end = \
+        bpy.props.IntProperty(default=-1)
 
 def unregister():
     del bpy.types.Scene.duperender_dupelist

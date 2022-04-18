@@ -242,6 +242,9 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
         scn.duperender_originallist = self.original_frames_string
         scn.duperender_render = True
 
+        scn.duperender_frame_start = scn.frame_start
+        scn.duperender_frame_end = scn.frame_end
+
         # redraw props gui
         for area in context.screen.areas:
             area.tag_redraw()

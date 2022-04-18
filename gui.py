@@ -30,11 +30,19 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         box = bigcol.box()
         col = box.column(align=True)
         if scn.render.is_movie_format:
-            col.label(text="Movie Format Output used", icon = "INFO")
+            col.label(text="Movie Format Output used", icon = "ERROR")
         elif scn.render.use_overwrite:
-            col.label(text="Overwrite Render used", icon = "INFO")
+            col.label(text="Overwrite Render used", icon = "ERROR")
         elif scn.duperender_dupelist == "":
-            col.label(text="No dupe frames", icon = "INFO")
+            col.label(text="No dupe frames", icon = "ERROR")
+        elif scn.duperender_frame_start==-1 and scn.duperender_frame_end==-1:
+            col.label(text="No processed range", icon = "ERROR")
+        elif scn.duperender_frame_start>scn.frame_start\
+            or scn.duperender_frame_end<scn.frame_end:
+            col.label(text="Range superior to processed frames", icon = "ERROR")
+        elif scn.duperender_frame_start!=scn.frame_start\
+            or scn.duperender_frame_end!=scn.frame_end:
+            col.label(text="Range changed, could cause problems", icon = "INFO")
         else:
             col.label(text="Ready", icon = "CHECKMARK")
         col.separator()
@@ -48,6 +56,8 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         col = box.column(align=True)
         col.operator("duperender.find_dupe_frames")
 
+        if scn.duperender_frame_start!=-1 and scn.duperender_frame_end!=-1:
+            col.label(text="Processed Range : %i-%i" % (scn.duperender_frame_start, scn.duperender_frame_end))
         col.prop(scn, "duperender_dupelist", text="Dupes")
         col.prop(scn, "duperender_originallist", text="Originals")
 
