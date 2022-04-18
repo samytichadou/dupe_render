@@ -73,11 +73,19 @@ def get_modifiers_hash():
                 lst.append(get_props_hash(m))
     return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
 
+def get_custom_props_hash(ob):
+    lst = []
+    for k in ob.keys():
+        lst.append(k)
+        lst.append(getattr(ob, '["%s"]' % k))
+    return hashlib.md5(str(lst).encode("utf-8")).hexdigest()  
+
 def get_objects_props_hash():
     lst = []
     for ob in bpy.context.scene.objects:
         if not ob.hide_render:
             lst.append(get_props_hash(ob))
+            lst.append(get_custom_props_hash(ob))
     return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
 
 def get_scene_props_hash():
