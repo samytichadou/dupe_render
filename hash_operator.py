@@ -160,7 +160,7 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
         col.prop(self, "original_frames_string", text="")
         col.separator()
         col.label(text="%i dupe(s) could be skipped" % self.dupe_frames)
-        layout.label(text="OK to activate dupe render")       
+        layout.label(text="OK to set dupe render")       
 
     def execute(self, context):
         scn = context.scene
@@ -172,7 +172,7 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
         for area in context.screen.areas:
             area.tag_redraw()
 
-        self.report({'INFO'}, "Dupe Frames scheduled")
+        self.report({'INFO'}, "Dupe Frames set")
         
         return {'FINISHED'}
 
