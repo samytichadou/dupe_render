@@ -36,7 +36,7 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         elif scn.duperender_dupelist == "":
             col.label(text="No dupe frames", icon = "INFO")
         else:
-            col.label(text="All set", icon = "CHECKMARK")
+            col.label(text="Ready", icon = "CHECKMARK")
         col.separator()
         col.prop(scn.render.image_settings, "file_format")
         col.prop(scn.render, "use_overwrite")
