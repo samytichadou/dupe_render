@@ -93,13 +93,23 @@ def get_frame_hash():
     hash = hashlib.md5(str(lst).encode("utf-8")).hexdigest()
     return hash
 
-def get_frames_to_render(scn):
+def get_frames_to_render(context):
+    scn = context.scene
+
+    #update cursor
+    wm = context.window_manager
+    upd_value = 1000/(scn.frame_end-scn.frame_start+1)
+    wm.progress_begin(0, 1000)
+
     hash_list = []
     frame_list = []
     dupe_list = []
     old_frame = scn.frame_current
 
+    i=0
     for f in range(scn.frame_start, scn.frame_end + 1):
+        i+=upd_value
+        wm.progress_update(int(i))
         scn.frame_current = f
         hash = get_frame_hash()
         print("Dupe Render --- frame %i : %s" % (f, hash))
@@ -109,6 +119,7 @@ def get_frames_to_render(scn):
         else:
             dupe_list.append(f)
 
+    wm.progress_end()
     scn.frame_current = old_frame
     return frame_list, dupe_list
 
@@ -140,7 +151,7 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
         fr_in = scn.frame_start
         fr_out = scn.frame_end
 
-        original_list, dupe_list = get_frames_to_render(scn)
+        original_list, dupe_list = get_frames_to_render(context)
 
         self.final_range = "%i - %i" % (fr_in, fr_out)
         self.original_frames_nb = len(original_list)
