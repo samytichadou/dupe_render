@@ -1,6 +1,7 @@
 import bpy
 import hashlib
 import json
+import time
 
 prop_exclude = [
     "frame_current",
@@ -65,6 +66,28 @@ def get_props_hash(ob):
         pass
     return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
 
+def get_nodetree_hash(nodetree):
+    lst = []
+    for n in nodetree.nodes:
+        lst.append(get_props_hash(n))
+        for i in n.inputs:
+            lst.append(i.identifier)
+            try:
+                if i.type=="VALUE":
+                    lst.append(str(i.default_value))
+                else:
+                    for n in range(len(i.default_value)):
+                        lst.append(str(i.default_value[n]))
+            except AttributeError:
+                pass
+    return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
+
+def get_shader_hash(ob):
+    lst = []
+    for s in ob.material_slots:
+        lst.append(get_nodetree_hash(s.material.node_tree))
+    return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
+
 def get_modifiers_hash():
     lst = []
     for ob in bpy.context.scene.objects:
@@ -85,8 +108,10 @@ def get_objects_props_hash():
     for ob in bpy.context.scene.objects:
         if not ob.hide_render:
             lst.append(get_props_hash(ob))
-            lst.append(get_props_hash(ob.data))
+            if ob.data:
+                lst.append(get_props_hash(ob.data))
             lst.append(get_custom_props_hash(ob))
+            lst.append(get_shader_hash(ob))
     return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
 
 def get_scene_props_hash():
@@ -163,6 +188,7 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
     range_error = False
     final_range = ""
     dupe_frames_string = ""
+    process_time = ""
 
     @classmethod
     def poll(cls, context):
@@ -174,7 +200,9 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
         fr_in = scn.frame_start
         fr_out = scn.frame_end
 
+        start_time = time.time()
         original_list, dupe_list = get_frames_to_render(context)
+        self.process_time = str(time.time() - start_time)
 
         self.final_range = "%i - %i" % (fr_in, fr_out)
         self.original_frames_nb = len(original_list)
@@ -189,6 +217,7 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
         layout = self.layout
 
         layout.label(text="Range : %s" % self.final_range)
+        layout.label(text="Processed in %s seconds" % self.process_time)
         col = layout.column(align=True)
         col.label(text="%i frame(s) to render out of %i" % (self.original_frames_nb, self.total_frames))
         col.prop(self, "original_frames_string", text="")
