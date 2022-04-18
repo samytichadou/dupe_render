@@ -73,7 +73,14 @@ def get_modifiers_hash():
                 lst.append(get_props_hash(m))
     return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
 
-def get_scene_props_hash() :
+def get_objects_props_hash():
+    lst = []
+    for ob in bpy.context.scene.objects:
+        if not ob.hide_render:
+            lst.append(get_props_hash(ob))
+    return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
+
+def get_scene_props_hash():
     scn = bpy.context.scene
     lst = []
 
@@ -95,6 +102,7 @@ def get_frame_hash():
     lst.append(get_scene_objects_matrix_hash())
     lst.append(get_scene_props_hash())
     lst.append(get_modifiers_hash())
+    lst.append(get_objects_props_hash())
 
     hash = hashlib.md5(str(lst).encode("utf-8")).hexdigest()
     return hash
