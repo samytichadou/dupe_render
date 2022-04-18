@@ -3,29 +3,6 @@ import shutil
 import os
 
 from bpy.app.handlers import persistent
-#from .hash_operator import get_frames_to_render
-
-# @persistent
-# def render_init_handler(scene):
-#     #check for overwrite off and animation render
-#     if scene.render.use_overwrite:
-#         print("Dupe Render --- render overwrite ON, no Dupe Render operations")
-#         return
-
-#     #cleaning
-#     print("Dupe Render --- cleaning previous list")
-#     scene.duperender_dupelist = ""
-
-#     #building list
-#     print("Dupe Render --- building list")
-#     dupe_list = get_frames_to_render(scene.frame_start, scene.frame_end, scene)[1]
-#     scene.duperender_dupelist = ",".join(str(e) for e in dupe_list)
-
-#     #creating empty files
-#     print("Dupe Render --- creating placeholders")
-#     for f in dupe_list:
-#         path = scene.render.frame_path(frame=f)
-#         open(path, 'a').close()
 
 def create_placeholders(scene):
     dupe_list = scene.duperender_dupelist.split(",")
