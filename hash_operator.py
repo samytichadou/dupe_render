@@ -85,6 +85,7 @@ def get_objects_props_hash():
     for ob in bpy.context.scene.objects:
         if not ob.hide_render:
             lst.append(get_props_hash(ob))
+            lst.append(get_props_hash(ob.data))
             lst.append(get_custom_props_hash(ob))
     return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
 
