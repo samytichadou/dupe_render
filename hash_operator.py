@@ -37,10 +37,8 @@ def get_scene_objects_matrix_hash() :
     lst = []
     for ob in bpy.context.scene.objects:
         lst.append(get_matrix_hash(ob, dg))
-        
-    hash = hashlib.md5(str(lst).encode("utf-8")).hexdigest()
-    
-    return hash
+   
+    return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
 
 ### PROPS
 def is_serializable(x):
@@ -65,8 +63,15 @@ def get_props_hash(ob):
             #     print("prop avoided --- %s" % p.identifier)
     except AttributeError:
         pass
-    hash = hashlib.md5(str(lst).encode("utf-8")).hexdigest()
-    return hash
+    return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
+
+def get_modifiers_hash():
+    lst = []
+    for ob in bpy.context.scene.objects:
+        if not ob.hide_render:
+            for m in ob.modifiers:
+                lst.append(get_props_hash(m))
+    return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
 
 def get_scene_props_hash() :
     scn = bpy.context.scene
@@ -89,6 +94,7 @@ def get_frame_hash():
     lst = []
     lst.append(get_scene_objects_matrix_hash())
     lst.append(get_scene_props_hash())
+    lst.append(get_modifiers_hash())
 
     hash = hashlib.md5(str(lst).encode("utf-8")).hexdigest()
     return hash
