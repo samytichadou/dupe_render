@@ -102,7 +102,7 @@ def get_frames_to_render(scn):
     for f in range(scn.frame_start, scn.frame_end + 1):
         scn.frame_current = f
         hash = get_frame_hash()
-        print("frame %i --- %s" % (f, hash))
+        print("Dupe Render --- frame %i : %s" % (f, hash))
         if hash not in hash_list:
             hash_list.append(hash)
             frame_list.append(f)
