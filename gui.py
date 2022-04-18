@@ -38,8 +38,10 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         else:
             col.label(text="Ready", icon = "CHECKMARK")
         col.separator()
-        col.prop(scn.render.image_settings, "file_format")
-        col.prop(scn.render, "use_overwrite")
+        row = col.row()
+        row.label(text="Render Settings")
+        row.prop(scn.render.image_settings, "file_format", text="")
+        row.prop(scn.render, "use_overwrite")
 
         # process box
         box = bigcol.box()
