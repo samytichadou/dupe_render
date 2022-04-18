@@ -20,7 +20,7 @@ def render_init_handler(scene):
     #check if dupe is used
     if scene.render.is_movie_format\
     or scene.render.use_overwrite\
-    or not scene.duperender_next_render\
+    or not scene.duperender_render\
     or scene.duperender_dupelist == "":
         print("Dupe Render --- no Dupe Render operations (movie output/overwrite render used/no dupe/not scheduled)")
         return
@@ -59,7 +59,7 @@ def render_complete_handler(scene):
     #check if dupe is used
     if scene.render.is_movie_format\
     or scene.render.use_overwrite\
-    or not scene.duperender_next_render\
+    or not scene.duperender_render\
     or scene.duperender_dupelist == "":
         print("Dupe Render --- no Dupe Render operations (movie output/overwrite render used/no dupe/not scheduled)")
         return

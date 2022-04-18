@@ -166,7 +166,7 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
         scn = context.scene
         scn.duperender_dupelist = self.dupe_frames_string
         scn.duperender_originallist = self.original_frames_string
-        scn.duperender_next_render = True
+        scn.duperender_render = True
 
         # redraw props gui
         for area in context.screen.areas:
