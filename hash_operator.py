@@ -88,6 +88,16 @@ def get_shader_hash(ob):
         lst.append(get_nodetree_hash(s.material.node_tree))
     return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
 
+def get_materials_hash():
+    lst = []
+    for m in bpy.data.materials:
+        if (m.users > 0 and not m.use_fake_user)\
+        or (m.use_fake_user and m.users > 1):
+            lst.append(get_props_hash(m))
+            if m.node_tree:
+                lst.append(get_nodetree_hash(m.node_tree))
+    return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
+
 def get_modifiers_hash():
     lst = []
     for ob in bpy.context.scene.objects:
@@ -111,7 +121,7 @@ def get_objects_props_hash():
             if ob.data:
                 lst.append(get_props_hash(ob.data))
             lst.append(get_custom_props_hash(ob))
-            lst.append(get_shader_hash(ob))
+            #lst.append(get_shader_hash(ob))
     return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
 
 def get_scene_props_hash():
@@ -137,6 +147,7 @@ def get_frame_hash():
     lst.append(get_scene_props_hash())
     lst.append(get_modifiers_hash())
     lst.append(get_objects_props_hash())
+    lst.append(get_materials_hash())
 
     hash = hashlib.md5(str(lst).encode("utf-8")).hexdigest()
     return hash
