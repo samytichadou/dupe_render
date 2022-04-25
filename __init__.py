@@ -20,7 +20,7 @@ Created by Samy Tichadou
 
 bl_info = {
     "name": "Dupe Render",
-    "description": "Skip dupe frame render in animation",
+    "description": "Skip dupe frames render in animation",
     "author": "Samy Tichadou (tonton)",
     "version": (0, 1, 4),
     "blender": (3, 0, 0),
