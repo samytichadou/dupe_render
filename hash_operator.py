@@ -2,6 +2,7 @@ import bpy
 import hashlib
 import json
 import time
+from datetime import datetime
 
 prop_exclude = [
     "frame_current",
@@ -200,6 +201,7 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
     final_range = ""
     dupe_frames_string = ""
     process_time = ""
+    render_gain = 0
 
     @classmethod
     def poll(cls, context):
@@ -221,6 +223,7 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
         self.dupe_frames = self.total_frames - self.original_frames_nb
         self.original_frames_string = ",".join(str(e) for e in original_list)
         self.dupe_frames_string = ",".join(str(e) for e in dupe_list)
+        self.render_gain = int((self.total_frames-self.original_frames_nb)/(self.total_frames/100))
 
         return context.window_manager.invoke_props_dialog(self)
  
@@ -234,6 +237,7 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
         col.prop(self, "original_frames_string", text="")
         col.separator()
         col.label(text="%i dupe(s) could be skipped" % self.dupe_frames)
+        col.label(text="%i%% render gain" % self.render_gain)
         layout.label(text="OK to set dupe render")       
 
     def execute(self, context):
@@ -244,6 +248,13 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
 
         scn.duperender_frame_start = scn.frame_start
         scn.duperender_frame_end = scn.frame_end
+
+        scn.duperender_nb_fr_to_render = self.original_frames_nb
+        scn.duperender_nb_fr_total = self.total_frames
+
+        scn.duperender_gain = self.render_gain
+
+        scn.duperender_processing_date = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
         # redraw props gui
         for area in context.screen.areas:

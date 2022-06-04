@@ -16,6 +16,14 @@ def register():
         bpy.props.IntProperty(default=-1)
     bpy.types.Scene.duperender_frame_end = \
         bpy.props.IntProperty(default=-1)
+    bpy.types.Scene.duperender_processing_date = \
+        bpy.props.StringProperty()
+    bpy.types.Scene.duperender_nb_fr_to_render = \
+        bpy.props.IntProperty(default=-1)
+    bpy.types.Scene.duperender_nb_fr_total = \
+        bpy.props.IntProperty(default=-1)
+    bpy.types.Scene.duperender_gain = \
+        bpy.props.IntProperty(default=-1)
 
 def unregister():
     del bpy.types.Scene.duperender_dupelist
