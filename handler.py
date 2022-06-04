@@ -13,8 +13,11 @@ def create_placeholders(scene):
         f = int(dupe)
         if f in range(scene.frame_start, scene.frame_end+1) and f!=scene.frame_start:
             path = scene.render.frame_path(frame=f)
-            print("Dupe Render --- creating placeholder : %s" % path)
-            open(path, 'a').close()
+            if os.path.isfile(path):
+                print("Dupe Render --- placeholder already exists : %s" % path)
+            else:
+                print("Dupe Render --- creating placeholder : %s" % path)
+                open(path, 'a').close()
 
 @persistent
 def render_init_handler(scene):
