@@ -29,22 +29,25 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         # render infos box
         box = bigcol.box()
         col = box.column(align=True)
+        row = col.row()
+        row.alert=True
         if scn.render.is_movie_format:
-            col.label(text="Movie Format Output used", icon = "ERROR")
+            row.label(text="Movie Format Output used", icon = "ERROR")
         elif scn.render.use_overwrite:
-            col.label(text="Overwrite Render used", icon = "ERROR")
+            row.label(text="Overwrite Render used", icon = "ERROR")
         elif scn.duperender_dupelist == "":
-            col.label(text="No dupe frames", icon = "ERROR")
+            row.label(text="No dupe frames", icon = "ERROR")
         elif scn.duperender_frame_start==-1 and scn.duperender_frame_end==-1:
-            col.label(text="No processed range", icon = "ERROR")
+            row.label(text="No processed range", icon = "ERROR")
         elif scn.duperender_frame_start>scn.frame_start\
             or scn.duperender_frame_end<scn.frame_end:
-            col.label(text="Range superior to processed frames", icon = "ERROR")
+            row.label(text="Range superior to processed frames", icon = "ERROR")
         elif scn.duperender_frame_start!=scn.frame_start\
             or scn.duperender_frame_end!=scn.frame_end:
-            col.label(text="Range changed, could cause problems", icon = "INFO")
+            row.label(text="Range changed, could cause problems", icon = "INFO")
         else:
-            col.label(text="Ready", icon = "CHECKMARK")
+            row.alert=False
+            row.label(text="Ready", icon = "CHECKMARK")
         col.separator()
         row = col.row()
         row.label(text="Render Settings")
