@@ -99,8 +99,15 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         col.prop(scn, "duperender_dupelist", text="Dupes")
         col.prop(scn, "duperender_originallist", text="Originals")
         #col.operator("duperender.hash_frame")
+
+        # manual op
+        box = layout.box()
+        col = box.column(align=True)
+        col.label(text="Manual Frame Operations")
         col.separator()
         col.operator("duperender.create_placeholders")
+        col.operator("duperender.remove_placeholders")
+        col.separator()
         col.operator("duperender.duplicate_originals")
 
 
