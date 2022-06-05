@@ -56,10 +56,8 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         # Dupe range Infos
         row = col.row()
         row.alert=True
-        if scn.duperender_dupelist == "":
-            row.label(text="No dupe frames", icon = "ERROR")
-        elif scn.duperender_frame_start==-1 and scn.duperender_frame_end==-1:
-            row.label(text="No processed range", icon = "ERROR")
+        if not scn.duperender_is_processed:
+            row.label(text="Dupes not processed", icon = "ERROR")
         elif scn.duperender_frame_start>scn.frame_start\
             or scn.duperender_frame_end<scn.frame_end:
             row.label(text="Range superior to processed frames", icon = "ERROR")
@@ -67,38 +65,42 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
             or scn.duperender_frame_end!=scn.frame_end:
             row.alert=False
             row.label(text="Range changed, could cause problems", icon = "INFO")
+        elif scn.duperender_dupelist == "":
+            row.alert=False
+            row.label(text="No dupe frames", icon = "INFO")
         else:
             row.alert=False
             row.label(text="Dupes OK", icon = "CHECKMARK")
 
-        if scn.duperender_nb_fr_to_render!=-1:
+        col.separator()
+        col.operator("duperender.find_dupe_frames")
+
+        # Dupes infos
+        if scn.duperender_is_processed:
+            col.separator()
             row = col.row()
             split = row.split()
             split.label(text="%i/%i Originals" % (scn.duperender_nb_fr_to_render, scn.duperender_nb_fr_total))
             split.label(text="%i Dupes" % scn.duperender_nb_dupes_fr)
-            if scn.duperender_gain!=-1:
-                split.alignment='RIGHT'
-                split.label(text="%i%% Render Gain" % scn.duperender_gain)
+            split.alignment='RIGHT'
+            split.label(text="%i%% Render Gain" % scn.duperender_gain)
 
-        col.separator()
-        col.operator("duperender.find_dupe_frames")
-
-        col.separator()
-        if scn.duperender_frame_start!=-1 and scn.duperender_frame_end!=-1:
+            col.separator()
             row = col.row()
             split = row.split()
             split.label(text="Processed Range")
             split.alignment='RIGHT'
             split.label(text="%i-%i" % (scn.duperender_frame_start, scn.duperender_frame_end))
-        if scn.duperender_processing_date:
+
             row = col.row()
             split = row.split()
             split.label(text="Processed Date")
             split.alignment='RIGHT'
             split.label(text=scn.duperender_processing_date)
-        col.separator()
-        col.prop(scn, "duperender_dupelist", text="Dupes")
-        col.prop(scn, "duperender_originallist", text="Originals")
+
+            col.separator()
+            col.prop(scn, "duperender_dupelist", text="Dupes")
+            col.prop(scn, "duperender_originallist", text="Originals")
         #col.operator("duperender.hash_frame")
 
         # manual op

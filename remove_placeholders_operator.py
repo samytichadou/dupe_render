@@ -46,6 +46,7 @@ class DUPERENDER_OT_remove_placeholders(bpy.types.Operator):
     scene_range : bpy.props.BoolProperty(
         name = "Scene Frame Range",
         description="Remove placeholders in the scene frame range",
+        default=True,
         )
 
     all_frames : bpy.props.BoolProperty(
