@@ -186,7 +186,7 @@ def get_frames_to_render(context):
 
 class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
     bl_idname = "duperender.find_dupe_frames"
-    bl_label = "Find dupe frames"
+    bl_label = "Process dupe frames"
     bl_description = "Process dupe images to skip on next render"
     #bl_options = {'INTERNAL'}
 
