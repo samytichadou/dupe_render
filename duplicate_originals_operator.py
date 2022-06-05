@@ -20,8 +20,8 @@ class DUPERENDER_OT_duplicate_originals(bpy.types.Operator):
         layout = self.layout
         layout.label(text="Proceed with caution", icon="ERROR")
         col=layout.column(align=True)
-        col.label(text="This action will duplicate original files")
-        col.label(text="and overwrite placeholders")  
+        col.label(text="This action will duplicate original")
+        col.label(text="files and overwrite placeholders")
         col.label(text="Are you sure ?")  
 
     def execute(self, context):
