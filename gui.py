@@ -99,6 +99,8 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         col.prop(scn, "duperender_dupelist", text="Dupes")
         col.prop(scn, "duperender_originallist", text="Originals")
         #col.operator("duperender.hash_frame")
+        col.separator()
+        col.operator("duperender.create_placeholders")
 
 
 ### REGISTER ---

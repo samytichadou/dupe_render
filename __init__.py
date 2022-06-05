@@ -37,6 +37,7 @@ from . import   (
     hash_operator,
     properties,
     gui,
+    create_placeholders_operator,
     )
 
 
@@ -48,9 +49,11 @@ def register():
     hash_operator.register()
     properties.register()
     gui.register()
+    create_placeholders_operator.register()
 
 def unregister():
     handler.unregister()
     hash_operator.unregister()
     properties.unregister()
     gui.unregister()
+    create_placeholders_operator.unregister()
