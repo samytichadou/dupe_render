@@ -4,14 +4,20 @@ import os
 
 from bpy.app.handlers import persistent
 
-def create_placeholders(scene):
+def create_placeholders(scene, scene_range=True):
     dupe_list = scene.duperender_dupelist.split(",")
     base_dir = os.path.dirname(scene.render.frame_path(frame=1))
+
+    if scene_range:
+        frame_range=range(scene.frame_start, scene.frame_end+1)
+    else:
+        frame_range=range(scene.duperender_frame_start, scene.duperender_frame_end+1)
+
     if not os.path.isdir(base_dir):
         os.makedirs(base_dir)
     for dupe in dupe_list:
         f = int(dupe)
-        if f in range(scene.frame_start, scene.frame_end+1) and f!=scene.frame_start:
+        if f in frame_range and f!=scene.frame_start:
             path = scene.render.frame_path(frame=f)
             if os.path.isfile(path):
                 print("Dupe Render --- file already exists : %s" % path)
@@ -41,12 +47,17 @@ def search_original_from_dupe(frame, scene):
         return scene.frame_start
     return None
 
-def replace_placeholders(scene):
+def replace_placeholders(scene, scene_range=True):
     dupe_list = scene.duperender_dupelist.split(",")
+
+    if scene_range:
+        frame_range=range(scene.frame_start, scene.frame_end+1)
+    else:
+        frame_range=range(scene.duperender_frame_start, scene.duperender_frame_end+1)
 
     for dupe in dupe_list:
         i = int(dupe)
-        if i in range(scene.frame_start, scene.frame_end+1):
+        if i in frame_range:
             path = scene.render.frame_path(frame=i)
             original = search_original_from_dupe(i, scene)
             if original is not None:

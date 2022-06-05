@@ -9,6 +9,12 @@ class DUPERENDER_OT_duplicate_originals(bpy.types.Operator):
     bl_description = "Create empty files for detected Dupe frames"
     #bl_options = {'INTERNAL'}
 
+    scene_range : bpy.props.BoolProperty(
+        name = "Scene Frame Range",
+        description="Remove placeholders in the scene frame range",
+        default=True,
+        )
+
     @classmethod
     def poll(cls, context):
         return context.scene.duperender_dupelist!=""
@@ -18,7 +24,10 @@ class DUPERENDER_OT_duplicate_originals(bpy.types.Operator):
  
     def draw(self, context):
         layout = self.layout
-        col=layout.column(align=True)
+        layout.prop(self, "scene_range")
+
+        box=layout.box()
+        col=box.column(align=True)
         col.label(text="Proceed with caution", icon="ERROR")
         col.label(text="This action will duplicate original")
         col.label(text="files and overwrite placeholders")
@@ -26,7 +35,7 @@ class DUPERENDER_OT_duplicate_originals(bpy.types.Operator):
 
     def execute(self, context):
         scn = context.scene
-        replace_placeholders(scn)
+        replace_placeholders(scn, self.scene_range)
 
         self.report({'INFO'}, "Original files duplicated")
         
