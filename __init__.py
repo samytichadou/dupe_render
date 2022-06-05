@@ -38,6 +38,7 @@ from . import   (
     properties,
     gui,
     create_placeholders_operator,
+    duplicate_originals_operator,
     )
 
 
@@ -50,6 +51,7 @@ def register():
     properties.register()
     gui.register()
     create_placeholders_operator.register()
+    duplicate_originals_operator.register()
 
 def unregister():
     handler.unregister()
@@ -57,3 +59,4 @@ def unregister():
     properties.unregister()
     gui.unregister()
     create_placeholders_operator.unregister()
+    duplicate_originals_operator.unregister()

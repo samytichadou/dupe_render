@@ -101,6 +101,7 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         #col.operator("duperender.hash_frame")
         col.separator()
         col.operator("duperender.create_placeholders")
+        col.operator("duperender.duplicate_originals")
 
 
 ### REGISTER ---

@@ -1,6 +1,6 @@
 import bpy
 
-from .handler import create_placeholders
+from .handler import replace_placeholders
 
 
 class DUPERENDER_OT_duplicate_originals(bpy.types.Operator):
@@ -18,14 +18,17 @@ class DUPERENDER_OT_duplicate_originals(bpy.types.Operator):
  
     def draw(self, context):
         layout = self.layout
-        layout.label(text="This action will create placeholders", icon="ERROR")
-        layout.label(text="Are you sure ?")  
+        layout.label(text="Proceed with caution", icon="ERROR")
+        col=layout.column(align=True)
+        col.label(text="This action will duplicate original files")
+        col.label(text="and overwrite placeholders")  
+        col.label(text="Are you sure ?")  
 
     def execute(self, context):
         scn = context.scene
-        create_placeholders(scn)
+        replace_placeholders(scn)
 
-        self.report({'INFO'}, "Placeholders created")
+        self.report({'INFO'}, "Original files duplicated")
         
         return {'FINISHED'}
 
