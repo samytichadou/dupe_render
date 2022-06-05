@@ -52,6 +52,10 @@ def replace_placeholders(scene):
             if original is not None:
                 #remove dupe frame
                 if os.path.isfile(path):
+                    #check if placeholder
+                    if os.path.getsize(path)!=0:
+                        print("Dupe Render --- frame %i is not a placeholder, skipping" % i)
+                        continue
                     try:
                         os.remove(path)
                     except OSError as error:
