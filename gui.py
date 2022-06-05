@@ -74,7 +74,8 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         if scn.duperender_nb_fr_to_render!=-1:
             row = col.row()
             split = row.split()
-            split.label(text="%i/%i Frame(s) to Render" % (scn.duperender_nb_fr_to_render, scn.duperender_nb_fr_total))
+            split.label(text="%i/%i Originals" % (scn.duperender_nb_fr_to_render, scn.duperender_nb_fr_total))
+            split.label(text="%i Dupes" % scn.duperender_nb_dupes_fr)
             if scn.duperender_gain!=-1:
                 split.alignment='RIGHT'
                 split.label(text="%i%% Render Gain" % scn.duperender_gain)

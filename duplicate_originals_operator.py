@@ -17,7 +17,7 @@ class DUPERENDER_OT_duplicate_originals(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.scene.duperender_dupelist!=""
+        return context.scene.duperender_is_processed
 
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)

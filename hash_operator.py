@@ -250,11 +250,14 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
         scn.duperender_frame_end = scn.frame_end
 
         scn.duperender_nb_fr_to_render = self.original_frames_nb
+        scn.duperender_nb_dupes_fr = self.dupe_frames
         scn.duperender_nb_fr_total = self.total_frames
 
         scn.duperender_gain = self.render_gain
 
         scn.duperender_processing_date = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+
+        scn.duperender_is_processed = True
 
         # redraw props gui
         for area in context.screen.areas:
