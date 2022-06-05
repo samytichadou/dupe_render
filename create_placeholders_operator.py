@@ -18,8 +18,8 @@ class DUPERENDER_OT_create_placeholders(bpy.types.Operator):
  
     def draw(self, context):
         layout = self.layout
-        layout.label(text="Proceed with caution", icon="ERROR")
         col=layout.column(align=True)
+        col.label(text="Proceed with caution", icon="ERROR")
         col.label(text="This action will create placeholders")
         col.label(text="Are you sure ?")  
 
