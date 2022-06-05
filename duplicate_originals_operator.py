@@ -3,9 +3,9 @@ import bpy
 from .handler import create_placeholders
 
 
-class DUPERENDER_OT_create_placeholders(bpy.types.Operator):
-    bl_idname = "duperender.create_placeholders"
-    bl_label = "Create placeholders"
+class DUPERENDER_OT_duplicate_originals(bpy.types.Operator):
+    bl_idname = "duperender.duplicate_originals"
+    bl_label = "Duplicate originals"
     bl_description = "Create empty files for detected Dupe frames"
     #bl_options = {'INTERNAL'}
 
@@ -33,7 +33,7 @@ class DUPERENDER_OT_create_placeholders(bpy.types.Operator):
 ### REGISTER ---
 
 def register():
-    bpy.utils.register_class(DUPERENDER_OT_create_placeholders)
+    bpy.utils.register_class(DUPERENDER_OT_duplicate_originals)
 
 def unregister():
-    bpy.utils.unregister_class(DUPERENDER_OT_create_placeholders)
+    bpy.utils.unregister_class(DUPERENDER_OT_duplicate_originals)
