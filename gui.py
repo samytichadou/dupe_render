@@ -21,13 +21,13 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
 
         # if not scn.duperender_use_duperender:
         #     layout.enabled = False
-        if not scn.duperender_render:
-            layout.enabled = False
 
         bigcol = layout.column(align=True)
 
         # render infos box
         box = layout.box()
+        if not scn.duperender_render:
+            box.enabled = False
         col = box.column(align=True)
         col.label(text="Render Settings")
         # Render settings Infos
