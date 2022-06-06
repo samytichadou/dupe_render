@@ -50,7 +50,7 @@ class DUPERENDER_OT_remove_placeholders(bpy.types.Operator):
         )
 
     all_frames : bpy.props.BoolProperty(
-        name = "All frames",
+        name = "Dupes and Originals",
         description="Remove all frames, not only dupe frames",
         )
 
@@ -59,13 +59,23 @@ class DUPERENDER_OT_remove_placeholders(bpy.types.Operator):
         return True
 
     def invoke(self, context, event):
+        if not context.scene.duperender_is_processed:
+            self.all_frames=True
+            self.scene_range=True
+        else:
+            self.all_frames=False
         return context.window_manager.invoke_props_dialog(self)
  
     def draw(self, context):
         layout = self.layout
-        row=layout.row()
-        row.prop(self, "scene_range")
-        row.prop(self, "all_frames")
+        if context.scene.duperender_is_processed:
+            row=layout.row()
+            row.prop(self, "scene_range")
+            row.prop(self, "all_frames")
+        else:
+            col=layout.column(align=True)
+            col.label(text="No Dupe frames processed")
+            col.label(text="All Placeholders in frame range will be removed")
 
         box=layout.box()
         col=box.column(align=True)
