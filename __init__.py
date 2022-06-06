@@ -22,7 +22,7 @@ bl_info = {
     "name": "Dupe Render",
     "description": "Skip dupe frames render in animation",
     "author": "Samy Tichadou (tonton)",
-    "version": (0, 1, 8),
+    "version": (0, 1, 9),
     "blender": (3, 0, 0),
     "location": "Properties > Render",
     "wiki_url": "https://github.com/samytichadou/dupe_render/blob/master/README.md",
