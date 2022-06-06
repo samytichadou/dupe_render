@@ -8,8 +8,8 @@ def register():
         bpy.props.StringProperty(name="Dupe List")
     bpy.types.Scene.duperender_originallist = \
         bpy.props.StringProperty(name="Original List") 
-    # bpy.types.Scene.duperender_use_duperender = \
-    #     bpy.props.BoolProperty(name="Use Dupe Render", default=True)
+    bpy.types.Scene.duperender_use_duperender = \
+        bpy.props.BoolProperty(name="Use Dupe Render", default=True)
     bpy.types.Scene.duperender_render = \
         bpy.props.BoolProperty(name="Use Dupe Render in animation render")
     bpy.types.Scene.duperender_frame_start = \
