@@ -79,28 +79,16 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         if scn.duperender_is_processed:
             col.separator()
             row = col.row()
-            split = row.split()
-            split.label(text="%i/%i Originals" % (scn.duperender_nb_fr_to_render, scn.duperender_nb_fr_total))
-            split.label(text="%i Dupes" % scn.duperender_nb_dupes_fr)
-            split.alignment='RIGHT'
-            split.label(text="%i%% Render Gain" % scn.duperender_gain)
+            row.alignment='CENTER'
+            row.operator(
+                "duperender.infos_popup",
+                icon="INFO",
+                text="%i/%i Originals    -    %i Dupes    -    %i%% Gain"\
+                    % (scn.duperender_nb_fr_to_render, scn.duperender_nb_fr_total,\
+                    scn.duperender_nb_dupes_fr, scn.duperender_gain),
+                emboss=False,
+            )
 
-            col.separator()
-            row = col.row()
-            split = row.split()
-            split.label(text="Processed Range")
-            split.alignment='RIGHT'
-            split.label(text="%i-%i" % (scn.duperender_frame_start, scn.duperender_frame_end))
-
-            row = col.row()
-            split = row.split()
-            split.label(text="Processed Date")
-            split.alignment='RIGHT'
-            split.label(text=scn.duperender_processing_date)
-
-            col.separator()
-            col.prop(scn, "duperender_dupelist", text="Dupes")
-            col.prop(scn, "duperender_originallist", text="Originals")
         #col.operator("duperender.hash_frame")
 
         # manual op
@@ -114,10 +102,91 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         col.operator("duperender.duplicate_originals")
 
 
+class DUPERENDER_OT_infos_popup(bpy.types.Operator):
+    bl_idname = "duperender.infos_popup"
+    bl_label = "Show Infos"
+    bl_description = "Show Infos about current Dupe process"
+    bl_options = {'INTERNAL'}
+
+    modify_dupes : bpy.props.BoolProperty(
+        name = "Modify Dupes",
+        )
+
+    modify_originals : bpy.props.BoolProperty(
+        name = "Modify Originals",
+        )
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.duperender_is_processed
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self, width=500)
+ 
+    def draw(self, context):
+        scn=context.scene
+
+        layout = self.layout
+        
+        col=layout.column(align=True)
+        
+        row = col.row()
+        split = row.split()
+        split.label(text="Processed Range")
+        split.alignment='RIGHT'
+        split.label(text="%i-%i" % (scn.duperender_frame_start, scn.duperender_frame_end))
+
+        row = col.row()
+        split = row.split()
+        split.label(text="Processed Date")
+        split.alignment='RIGHT'
+        split.label(text=scn.duperender_processing_date)
+
+        col.label(text="%i Dupes" % scn.duperender_nb_dupes_fr)
+        col.label(text="%i Originals" % scn.duperender_nb_fr_to_render)
+
+        col.separator()
+
+        box=col.box()
+        row=box.row(align=True)
+        row.alignment="LEFT"
+        row.label(text="Dupes    ")
+        row.separator()
+        row.prop(self, "modify_dupes", text="", icon="GREASEPENCIL")
+        subrow=row.row(align=True)
+        row.alignment="EXPAND"
+        if not self.modify_dupes:
+            subrow.enabled=False
+        subrow.prop(scn, "duperender_dupelist", text="")
+        grid = box.grid_flow(row_major=True, columns=15, align=True)
+        for i in scn.duperender_dupelist.split(","):
+            grid.label(text=i)
+        
+        box=col.box()
+        row=box.row(align=True)
+        row.alignment="LEFT"
+        row.label(text="Originals")
+        row.separator()
+        row.prop(self, "modify_originals", text="", icon="GREASEPENCIL")
+        subrow=row.row(align=True)
+        row.alignment="EXPAND"
+        if not self.modify_originals:
+            subrow.enabled=False
+        subrow.prop(scn, "duperender_originallist", text="")
+        grid = box.grid_flow(row_major=True, columns=15, align=True)
+        for i in scn.duperender_originallist.split(","):
+            grid.label(text=i)
+
+    def execute(self, context):       
+        return {'FINISHED'}
+
+
 ### REGISTER ---
 
 def register():
     bpy.utils.register_class(DUPERENDER_PT_main_panel)
+    bpy.utils.register_class(DUPERENDER_OT_infos_popup)
 
 def unregister():
     bpy.utils.unregister_class(DUPERENDER_PT_main_panel)
+    bpy.utils.unregister_class(DUPERENDER_OT_infos_popup)
