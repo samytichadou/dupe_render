@@ -27,7 +27,7 @@ def register():
     bpy.types.Scene.duperender_gain = \
         bpy.props.IntProperty(default=-1)
     bpy.types.Scene.duperender_is_processed = \
-        bpy.props.IntProperty()
+        bpy.props.BoolProperty()
 
 def unregister():
     del bpy.types.Scene.duperender_dupelist
