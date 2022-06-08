@@ -167,14 +167,18 @@ def get_frames_to_render(context):
     old_frame = scn.frame_current
 
     i=0
+    n=0
     for f in range(scn.frame_start, scn.frame_end + 1):
         i+=upd_value
         wm.progress_update(int(i))
         scn.frame_current = f
         hash = get_frame_hash()
         print("Dupe Render --- frame %i : %s" % (f, hash))
-        if hash not in hash_list:
+        # if hash not in hash_list:
+        if not hash_list or hash!=hash_list[n-1]:
+            print(hash)
             hash_list.append(hash)
+            n+=1
             frame_list.append(f)
         else:
             dupe_list.append(f)
