@@ -21,7 +21,7 @@ def remove_single_placeholder(scene, frame_number):
         return False
 
 def remove_dupe_placeholders(scene, scene_range):
-    dupe_list = scene.duperender_dupelist.split(",")
+    dupe_list = scene.duperender_properties.dupelist.split(",")
     for dupe in dupe_list:
         i = int(dupe)
         if not scene_range \
@@ -29,10 +29,11 @@ def remove_dupe_placeholders(scene, scene_range):
             remove_single_placeholder(scene, i)
 
 def remove_placeholders(scene, scene_range):
+    props = scene.duperender_properties
     if scene_range:
         frame_range=range(scene.frame_start, scene.frame_end+1)
     else:
-        frame_range=range(scene.duperender_frame_start, scene.duperender_frame_end+1)
+        frame_range=range(props.frame_start, props.frame_end+1)
     for i in frame_range:
         remove_single_placeholder(scene, i)
 
@@ -59,7 +60,7 @@ class DUPERENDER_OT_remove_placeholders(bpy.types.Operator):
         return True
 
     def invoke(self, context, event):
-        if not context.scene.duperender_is_processed:
+        if not context.scene.duperender_properties.is_processed:
             self.all_frames=True
             self.scene_range=True
         else:
@@ -68,7 +69,7 @@ class DUPERENDER_OT_remove_placeholders(bpy.types.Operator):
  
     def draw(self, context):
         layout = self.layout
-        if context.scene.duperender_is_processed:
+        if context.scene.duperender_properties.is_processed:
             row=layout.row()
             row.prop(self, "scene_range")
             row.prop(self, "all_frames")

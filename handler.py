@@ -5,13 +5,14 @@ import os
 from bpy.app.handlers import persistent
 
 def create_placeholders(scene, scene_range=True):
-    dupe_list = scene.duperender_dupelist.split(",")
+    props = scene.duperender_properties
+    dupe_list = props.dupelist.split(",")
     base_dir = os.path.dirname(scene.render.frame_path(frame=1))
 
     if scene_range:
         frame_range=range(scene.frame_start, scene.frame_end+1)
     else:
-        frame_range=range(scene.duperender_frame_start, scene.duperender_frame_end+1)
+        frame_range=range(props.frame_start, props.frame_end+1)
 
     if not os.path.isdir(base_dir):
         os.makedirs(base_dir)
@@ -27,12 +28,13 @@ def create_placeholders(scene, scene_range=True):
 
 @persistent
 def render_init_handler(scene):
+    props = scene.duperender_properties
     #check if dupe is used
     if scene.render.is_movie_format\
     or scene.render.use_overwrite\
-    or not scene.duperender_render\
-    or not scene.duperender_is_processed\
-    or scene.duperender_dupelist == "":
+    or not props.render\
+    or not props.is_processed\
+    or props.dupelist == "":
         print("Dupe Render --- no Dupe Render operations (movie output/overwrite render used/no dupe/not scheduled)")
         return
     
@@ -40,7 +42,7 @@ def render_init_handler(scene):
     create_placeholders(scene)
     
 def search_original_from_dupe(frame, scene):
-    dupe_list = scene.duperender_dupelist.split(",")
+    dupe_list = scene.duperender_properties.dupelist.split(",")
     for f in range(frame-1,scene.frame_start-1, -1):
         if str(f) not in dupe_list:
             return f
@@ -49,12 +51,13 @@ def search_original_from_dupe(frame, scene):
     return None
 
 def replace_placeholders(scene, scene_range=True):
-    dupe_list = scene.duperender_dupelist.split(",")
+    props = scene.duperender_properties
+    dupe_list = props.dupelist.split(",")
 
     if scene_range:
         frame_range=range(scene.frame_start, scene.frame_end+1)
     else:
-        frame_range=range(scene.duperender_frame_start, scene.duperender_frame_end+1)
+        frame_range=range(props.frame_start, props.frame_end+1)
 
     for dupe in dupe_list:
         i = int(dupe)
@@ -84,12 +87,13 @@ def replace_placeholders(scene, scene_range=True):
 
 @persistent
 def render_complete_handler(scene):
+    props = scene.duperender_properties
     #check if dupe is used
     if scene.render.is_movie_format\
     or scene.render.use_overwrite\
-    or not scene.duperender_render\
-    or not scene.duperender_is_processed\
-    or scene.duperender_dupelist == "":
+    or not props.render\
+    or not props.is_processed\
+    or props.dupelist == "":
         print("Dupe Render --- no Dupe Render operations (movie output/overwrite render used/no dupe/not scheduled)")
         return
 

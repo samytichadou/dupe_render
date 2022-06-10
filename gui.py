@@ -13,20 +13,22 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
 
     def draw_header(self, context):
         scn = context.scene
-        self.layout.prop(scn, "duperender_render", text="")
+        props = scn.duperender_properties
+        self.layout.prop(props, "render", text="")
 
     def draw(self, context):
         scn = context.scene
+        props = scn.duperender_properties
         layout = self.layout
 
-        # if not scn.duperender_use_duperender:
+        # if not props.use_duperender:
         #     layout.enabled = False
 
         bigcol = layout.column(align=True)
 
         # render infos box
         box = layout.box()
-        if not scn.duperender_render:
+        if not props.render:
             box.enabled = False
         col = box.column(align=True)
         col.label(text="Render Settings")
@@ -56,16 +58,16 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         # Dupe range Infos
         row = col.row()
         row.alert=True
-        if not scn.duperender_is_processed:
+        if not props.is_processed:
             row.label(text="Dupes not processed", icon = "ERROR")
-        elif scn.duperender_frame_start>scn.frame_start\
-            or scn.duperender_frame_end<scn.frame_end:
+        elif props.frame_start>scn.frame_start\
+            or props.frame_end<scn.frame_end:
             row.label(text="Range superior to processed frames", icon = "ERROR")
-        elif scn.duperender_frame_start!=scn.frame_start\
-            or scn.duperender_frame_end!=scn.frame_end:
+        elif props.frame_start!=scn.frame_start\
+            or props.frame_end!=scn.frame_end:
             row.alert=False
             row.label(text="Range changed, could cause problems", icon = "INFO")
-        elif scn.duperender_dupelist == "":
+        elif props.dupelist == "":
             row.alert=False
             row.label(text="No dupe frames", icon = "INFO")
         else:
@@ -76,7 +78,7 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
         col.operator("duperender.find_dupe_frames")
 
         # Dupes infos
-        if scn.duperender_is_processed:
+        if props.is_processed:
             col.separator()
             row = col.row()
             row.alignment='CENTER'
@@ -84,8 +86,8 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
                 "duperender.infos_popup",
                 icon="INFO",
                 text="%i/%i Originals    -    %i Dupes    -    %i%% Gain"\
-                    % (scn.duperender_nb_fr_to_render, scn.duperender_nb_fr_total,\
-                    scn.duperender_nb_dupes_fr, scn.duperender_gain),
+                    % (props.nb_fr_to_render, props.nb_fr_total,\
+                    props.nb_dupes_fr, props.gain),
                 emboss=False,
             )
 
@@ -118,13 +120,14 @@ class DUPERENDER_OT_infos_popup(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.scene.duperender_is_processed
+        return context.scene.duperender_properties.is_processed
 
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self, width=500)
  
     def draw(self, context):
         scn=context.scene
+        props = scn.duperender_properties
 
         layout = self.layout
         
@@ -134,16 +137,16 @@ class DUPERENDER_OT_infos_popup(bpy.types.Operator):
         split = row.split()
         split.label(text="Processed Range")
         split.alignment='RIGHT'
-        split.label(text="%i-%i" % (scn.duperender_frame_start, scn.duperender_frame_end))
+        split.label(text="%i-%i" % (props.frame_start, props.frame_end))
 
         row = col.row()
         split = row.split()
         split.label(text="Processed Date")
         split.alignment='RIGHT'
-        split.label(text=scn.duperender_processing_date)
+        split.label(text=props.processing_date)
 
-        col.label(text="%i Dupes" % scn.duperender_nb_dupes_fr)
-        col.label(text="%i Originals" % scn.duperender_nb_fr_to_render)
+        col.label(text="%i Dupes" % props.nb_dupes_fr)
+        col.label(text="%i Originals" % props.nb_fr_to_render)
 
         col.separator()
 
@@ -157,9 +160,9 @@ class DUPERENDER_OT_infos_popup(bpy.types.Operator):
         row.alignment="EXPAND"
         if not self.modify_dupes:
             subrow.enabled=False
-        subrow.prop(scn, "duperender_dupelist", text="")
+        subrow.prop(props, "dupelist", text="")
         grid = box.grid_flow(row_major=True, columns=15, align=True)
-        for i in scn.duperender_dupelist.split(","):
+        for i in props.dupelist.split(","):
             grid.label(text=i)
         
         box=col.box()
@@ -172,9 +175,9 @@ class DUPERENDER_OT_infos_popup(bpy.types.Operator):
         row.alignment="EXPAND"
         if not self.modify_originals:
             subrow.enabled=False
-        subrow.prop(scn, "duperender_originallist", text="")
+        subrow.prop(props, "originallist", text="")
         grid = box.grid_flow(row_major=True, columns=15, align=True)
-        for i in scn.duperender_originallist.split(","):
+        for i in props.originallist.split(","):
             grid.label(text=i)
 
     def execute(self, context):       
