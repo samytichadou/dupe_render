@@ -176,7 +176,6 @@ def get_frames_to_render(context):
         print("Dupe Render --- frame %i : %s" % (f, hash))
         # if hash not in hash_list:
         if not hash_list or hash!=hash_list[n-1]:
-            print(hash)
             hash_list.append(hash)
             n+=1
             frame_list.append(f)
