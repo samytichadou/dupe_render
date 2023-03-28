@@ -123,6 +123,16 @@ def get_objects_props_hash():
                 lst.append(get_props_hash(ob.data))
             lst.append(get_custom_props_hash(ob))
             #lst.append(get_shader_hash(ob))
+
+        if ob.type=="ARMATURE":
+            for bone in ob.pose.bones :
+                lst.append(bone.name)
+                lst.append(get_props_hash(bone))
+                lst.append(get_custom_props_hash(bone))
+            for bone in ob.data.bones:
+                lst.append(get_props_hash(bone))
+                lst.append(get_custom_props_hash(bone))
+
     return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
 
 def get_scene_props_hash():
