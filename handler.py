@@ -39,7 +39,9 @@ def render_init_handler(scene):
         return
     
     #creating empty files
+    print("Dupe Render --- creating placeholders")
     create_placeholders(scene)
+    print("Dupe Render --- placeholders created")
     
 def search_original_from_dupe(frame, scene):
     dupe_list = scene.duperender_properties.dupelist.split(",")
