@@ -28,6 +28,7 @@ def create_placeholders(scene, scene_range=True):
 
 @persistent
 def render_init_handler(scene):
+    print("Dupe Render --- starting handler")
     props = scene.duperender_properties
     #check if dupe is used
     if scene.render.is_movie_format\
