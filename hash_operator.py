@@ -196,6 +196,8 @@ def get_frames_to_render(context):
     scn.frame_current = old_frame
     return frame_list, dupe_list
 
+def create_string_frame_list(frame_list):
+    return ",".join(str(e) for e in frame_list)
 
 class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
     bl_idname = "duperender.find_dupe_frames"
@@ -234,8 +236,8 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
         self.original_frames_nb = len(original_list)
         self.total_frames = fr_out - fr_in + 1
         self.dupe_frames = self.total_frames - self.original_frames_nb
-        self.original_frames_string = ",".join(str(e) for e in original_list)
-        self.dupe_frames_string = ",".join(str(e) for e in dupe_list)
+        self.original_frames_string = create_string_frame_list(original_list)
+        self.dupe_frames_string = create_string_frame_list(dupe_list)
         self.render_gain = int((self.total_frames-self.original_frames_nb)/(self.total_frames/100))
 
         return context.window_manager.invoke_props_dialog(self)
@@ -299,12 +301,68 @@ class DUPERENDER_OT_hash_frame(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class DUPERENDER_OT_process_dupe_bg(bpy.types.Operator):
+    bl_idname = "duperender.process_dupes_bg"
+    bl_label = "Process Dupe Frames in Background"
+    bl_description = ""
+    bl_options = {'INTERNAL'}
+
+    @classmethod
+    def poll(cls, context):
+        return bpy.data.is_saved
+
+    def execute(self, context):
+        scn = context.scene
+        fr_in = scn.frame_start
+        fr_out = scn.frame_end
+
+        print("Dupe Render --- Starting dupe frames process")
+
+        start_time = time.time()
+        original_list, dupe_list = get_frames_to_render(context)
+        process_time = str(time.time() - start_time)
+
+        print(f"Dupe Render --- Dupe frames process done in {process_time}")
+
+        print("Dupe Render --- Setting scene properties")
+
+        props = scn.duperender_properties
+
+        props.dupelist = create_string_frame_list(dupe_list)
+        props.originallist = create_string_frame_list(original_list)
+        props.render = True
+
+        props.frame_start = scn.frame_start
+        props.frame_end = scn.frame_end
+
+        props.nb_fr_to_render=original_frames_nb=len(original_list)
+        props.nb_fr_total=total_frames=fr_out-fr_in+1
+        props.nb_dupes_fr=dupe_frames_nb=total_frames-original_frames_nb
+
+        props.gain=gain=int((total_frames-original_frames_nb)/(total_frames/100))
+
+        props.processing_date = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+
+        props.is_processed = True
+
+        print(f"Dupe Render --- {original_frames_nb} Originals")
+        print(f"Dupe Render --- {dupe_frames_nb} Dupes")
+        print(f"Dupe Render --- {gain}% Gain")
+
+        bpy.ops.wm.save_mainfile()
+        print(f"Dupe Render --- File saved at {bpy.data.filepath}")
+
+        return {'FINISHED'}
+
+
 ### REGISTER ---
 
 def register():
     bpy.utils.register_class(DUPERENDER_OT_find_dupe_frames)
     bpy.utils.register_class(DUPERENDER_OT_hash_frame)
+    bpy.utils.register_class(DUPERENDER_OT_process_dupe_bg)
 
 def unregister():
     bpy.utils.unregister_class(DUPERENDER_OT_find_dupe_frames)
     bpy.utils.unregister_class(DUPERENDER_OT_hash_frame)
+    bpy.utils.unregister_class(DUPERENDER_OT_process_dupe_bg)
