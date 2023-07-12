@@ -22,7 +22,7 @@ bl_info = {
     "name": "Dupe Render",
     "description": "Skip dupe frames render in animation",
     "author": "Samy Tichadou (tonton)",
-    "version": (0, 2, 0),
+    "version": (0, 2, 1),
     "blender": (3, 0, 0),
     "location": "Properties > Render",
     "wiki_url": "https://github.com/samytichadou/dupe_render/blob/master/README.md",
@@ -41,6 +41,7 @@ from . import   (
     create_placeholders_operator,
     duplicate_originals_operator,
     remove_placeholders_operator,
+    specific_frame_ranges_operators,
     )
 
 
@@ -56,6 +57,7 @@ def register():
     create_placeholders_operator.register()
     duplicate_originals_operator.register()
     remove_placeholders_operator.register()
+    specific_frame_ranges_operators.register()
 
 def unregister():
     preferences.unregister()
@@ -66,3 +68,4 @@ def unregister():
     create_placeholders_operator.unregister()
     duplicate_originals_operator.unregister()
     remove_placeholders_operator.unregister()
+    specific_frame_ranges_operators.unregister()

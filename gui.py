@@ -93,6 +93,22 @@ class DUPERENDER_PT_main_panel(bpy.types.Panel):
 
         #col.operator("duperender.hash_frame")
 
+        # Specific frame ranges
+        box = layout.box()
+        col = box.column(align=True)
+        col.label(text="Specific Frame Ranges")
+        col.separator()
+        row = col.row()
+        row.operator("duperender.add_frame_range")
+        op = row.operator("duperender.remove_frame_range", text = "Remove All")
+        op.all = True
+        col.separator()
+        for entry in props.specific_ranges:
+            row = col.row(align=True)
+            text = f"{entry.type} - {str(entry.frame_start).zfill(4)}-{str(entry.frame_end).zfill(4)}"
+            row.label(text = text)
+            row.operator("duperender.remove_frame_range", text="", icon="X")
+
         # manual op
         box = layout.box()
         col = box.column(align=True)

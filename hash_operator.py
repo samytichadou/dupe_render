@@ -183,7 +183,7 @@ def get_frame_hash():
 def get_frames_to_render(context):
     scn = context.scene
 
-    #update cursor
+    # Update progress
     wm = context.window_manager
     upd_value = 1000/(scn.frame_end-scn.frame_start+1)
     wm.progress_begin(0, 1000)
@@ -193,11 +193,15 @@ def get_frames_to_render(context):
     dupe_list = []
     old_frame = scn.frame_current
 
+    custom_dupe_list, custom_original_list = get_valid_specific_ranges()
+
     i=0
     n=0
     for f in range(scn.frame_start, scn.frame_end + 1):
+        # Update progress
         i+=upd_value
         wm.progress_update(int(i))
+
         scn.frame_current = f
         hash = get_frame_hash()
         print("Dupe Render --- frame %i : %s" % (f, hash))
@@ -211,10 +215,47 @@ def get_frames_to_render(context):
 
     wm.progress_end()
     scn.frame_current = old_frame
+
+    # Set custom ranges
+    for f in custom_dupe_list:
+        if f not in dupe_list:
+            dupe_list.append(f)
+        if f in frame_list:
+            frame_list.remove(f)
+    for f in custom_original_list:
+        if f not in frame_list:
+            frame_list.append(f)
+        if f in dupe_list:
+            dupe_list.remove(f)
+    frame_list.sort()
+    dupe_list.sort()
     return frame_list, dupe_list
 
 def create_string_frame_list(frame_list):
     return ",".join(str(e) for e in frame_list)
+
+def get_valid_specific_ranges():
+    scn = bpy.context.scene
+    range_collection = scn.duperender_properties.specific_ranges
+    dupe_list = []
+    original_list = []
+    for frame_range in range_collection:
+        print()
+        print(frame_range.type)
+        for f in range(frame_range.frame_start, frame_range.frame_end+1):
+            print(f)
+            if frame_range.type == "DUPE":
+                if f in dupe_list or f in original_list:
+                    return None
+                if f in range(scn.frame_start, scn.frame_end + 1):
+                    dupe_list.append(f)
+            else:
+                if f in dupe_list or f in original_list:
+                    return None
+                if f in range(scn.frame_start, scn.frame_end + 1):
+                    original_list.append(f)
+    return dupe_list, original_list
+
 
 class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
     bl_idname = "duperender.find_dupe_frames"
@@ -240,6 +281,11 @@ class DUPERENDER_OT_find_dupe_frames(bpy.types.Operator):
         return True
 
     def invoke(self, context, event):
+        # Check if specific ranges are valid
+        if get_valid_specific_ranges() is None:
+            self.report({'WARNING'}, "Invalid Specific Ranges")
+            return {'CANCELLED'}
+
         scn = context.scene
 
         fr_in = scn.frame_start
