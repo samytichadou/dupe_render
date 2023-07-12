@@ -363,6 +363,25 @@ class DUPERENDER_OT_hash_frame(bpy.types.Operator):
         self.report({'INFO'}, "Current frame hash --- %s" % hash)
         return {'FINISHED'}
 
+def reset_dupe_render():
+    props = bpy.context.scene.duperender_properties
+
+    props.dupelist = ""
+    props.originallist = ""
+    props.render = False
+
+    props.frame_start = -1
+    props.frame_end = -1
+
+    props.nb_fr_to_render=-1
+    props.nb_fr_total=-1
+    props.nb_dupes_fr=-1
+
+    props.gain = -1
+
+    props.processing_date = ""
+
+    props.is_processed = False
 
 class DUPERENDER_OT_process_dupe_bg(bpy.types.Operator):
     bl_idname = "duperender.process_dupes_bg"
@@ -375,6 +394,12 @@ class DUPERENDER_OT_process_dupe_bg(bpy.types.Operator):
         return bpy.data.is_saved
 
     def execute(self, context):
+        # Check if specific ranges are valid
+        if get_valid_specific_ranges() is None:
+            reset_dupe_render()
+            print("Dupe Render --- Invalid specific ranges, abort and reset")
+            return {'CANCELLED'}
+
         scn = context.scene
         fr_in = scn.frame_start
         fr_out = scn.frame_end
