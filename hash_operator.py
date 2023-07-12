@@ -10,6 +10,23 @@ prop_exclude = [
     "frame_float",
 ]
 
+# Find if object is on camera
+def is_on_camera(obj, scene):
+    from bpy_extras.object_utils import world_to_camera_view
+    cam = scene.camera
+    mesh = obj.data
+    mat_world = obj.matrix_world
+    cs, ce = cam.data.clip_start, cam.data.clip_end
+
+    for v in obj.data.vertices:
+        co_ndc = world_to_camera_view(scene, cam, mat_world @ v.co)
+        #check wether point is inside frustum
+        if (0.0 < co_ndc.x < 1.0 and
+            0.0 < co_ndc.y < 1.0 and
+            cs < co_ndc.z <  ce):
+            return True
+    return False
+
 ### MATRIX
 def world_matrix_to_hash(ob, dg) :
     mat = ob.evaluated_get(dg).matrix_world
