@@ -8,6 +8,10 @@ prop_exclude = [
     "frame_current",
     "frame_current_final",
     "frame_float",
+    "is_select_bold", # BUG with text object
+    "is_select_italic", # BUG with text object
+    "is_select_underline", # BUG with text object
+    "is_select_smallcaps", # BUG with text object
 ]
 
 # Find if object is on camera
@@ -82,6 +86,7 @@ def get_props_hash(ob):
             #     print("prop avoided --- %s" % p.identifier)
     except AttributeError:
         pass
+
     return hashlib.md5(str(lst).encode("utf-8")).hexdigest()
 
 def get_nodetree_hash(nodetree):
@@ -163,7 +168,7 @@ def get_scene_props_hash():
     # objects props
     for ob in scn.objects:
         lst.append(get_props_hash(ob))
-        
+
     hash = hashlib.md5(str(lst).encode("utf-8")).hexdigest()
     
     return hash
@@ -240,10 +245,7 @@ def get_valid_specific_ranges():
     dupe_list = []
     original_list = []
     for frame_range in range_collection:
-        print()
-        print(frame_range.type)
         for f in range(frame_range.frame_start, frame_range.frame_end+1):
-            print(f)
             if frame_range.type == "DUPE":
                 if f in dupe_list or f in original_list:
                     return None
