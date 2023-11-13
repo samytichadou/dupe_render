@@ -164,7 +164,8 @@ def get_scene_props_hash():
     # scene props
     lst.append(get_props_hash(scn))
     # world props
-    lst.append(get_props_hash(scn.world))
+    if scn.world:
+        lst.append(get_props_hash(scn.world))
     # objects props
     for ob in scn.objects:
         lst.append(get_props_hash(ob))
