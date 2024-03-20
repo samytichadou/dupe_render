@@ -92,11 +92,13 @@ def get_props_hash(ob):
 def get_nodetree_hash(nodetree):
     lst = []
     for n in nodetree.nodes:
+        # print(f"DUPE - node : {n.name}")
         lst.append(get_props_hash(n))
         for i in n.inputs:
+            # print(f"DUPE - input : {i.identifier}")
             lst.append(i.identifier)
             try:
-                if i.type=="VALUE":
+                if i.type in {"VALUE", "INT"}:
                     lst.append(str(i.default_value))
                 else:
                     for n in range(len(i.default_value)):
@@ -114,6 +116,7 @@ def get_shader_hash(ob):
 def get_materials_hash():
     lst = []
     for m in bpy.data.materials:
+        # print(f"DUPE - shader : {m.name}")
         if (m.users > 0 and not m.use_fake_user)\
         or (m.use_fake_user and m.users > 1):
             lst.append(get_props_hash(m))
